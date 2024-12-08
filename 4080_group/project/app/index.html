@@ -4,110 +4,176 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titanic</title>
-</head>
-<body>
-    <table>
-        <tbody>
-            <tr>
-                <td>Ticket class</td>
-                <td>
-                    <select id="pclass">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Sex</td>
-                <td>
-                    <select id="sex">
-                        <option value="1">Female</option>                        
-                        <option value="2">Male</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Age</td>
-                <td>
-                    <input id="age" type="number"/>
-                </td>
-            </tr>
-            <tr>
-                <td># of Siblings/Spouces</td>
-                <td>
-                    <input id="sibsp" type="number"/>
-                </td>
-            </tr>
-            <tr>
-                <td># of Parents/children</td>
-                <td>
-                    <input id="parch" type="number"/>
-                </td>
-            </tr>
-            <tr>
-                <td>Fare</td>
-                <td>
-                    <input id="fare"/>
-                </td>
-            </tr>
-            <tr>
-                <td>Embarked</td>
-                <td>
-                    <select id="embarked">
-                        <option value="1">S</option>
-                        <option value="2">C</option>
-                        <option value="3">Q</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Survived</td>
-                <td id="survived"></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div>
-                        <button id="submit" type="button">PREDICT</button>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <script>
-        document.getElementById("survived").innerHTML = "";
-        document.getElementById("submit").addEventListener("click",async() => {
-            response = await fetch("http://localhost:8080",{
-                method:"POST",
-                body: JSON.stringify({
-                    "pclass":parseInt(document.getElementById("pclass").value),
-                    "sex":parseInt(document.getElementById("sex").value),
-                    "age":parseFloat(document.getElementById("age").value),
-                    "sibsp":parseInt(document.getElementById("sibsp").value),
-                    "parch":parseInt(document.getElementById("parch").value),
-                    "fare":parseFloat(document.getElementById("fare").value),
-                    "embarked":parseInt(document.getElementById("embarked").value),
-                })
-            });
-            const survivedCode =  parseInt(await response.text());
-            document.getElementById("survived").innerHTML = survivedCode ? "YES" : "NO"
-        })
-    </script>
+    <title>Titanic Survival Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        input,select {
-            width:100%;
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
         }
         td {
-            padding:5px;
+            padding: 0.5rem 1rem;
         }
-        td > div {
-            text-align: center;
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d0d9e6;
+            border-radius: 4px;
+            font-family: 'Open Sans', sans-serif;
+        }
+        button {
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1565c0;
         }
         #survived {
             font-weight: bold;
-            color:green;
+            /*color: #0da128;*/
+        }
+        h1 {
+            color: #0d47a1;
+            text-align: center;
+            margin-bottom: 1.5rem;
         }
     </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Titanic Survival Predictor</h1>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Ticket class</td>
+                    <td>
+                        <select id="pclass">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sex</td>
+                    <td>
+                        <select id="sex">
+                            <option value="1">Female</option>                        
+                            <option value="2">Male</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Age</td>
+                    <td>
+                        <input id="age" type="number" min="0" step="1"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Siblings/Spouses</td>
+                    <td class="split-inputs">
+                        <input id="siblings" type="number" min="0" step="1" placeholder="Siblings"/>
+                        <input id="spouses" type="number" min="0" step="1" placeholder="Spouses"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Parents/Children</td>
+                    <td class="split-inputs">
+                        <input id="parents" type="number" min="0" step="1" placeholder="Parents"/>
+                        <input id="children" type="number" min="0" step="1" placeholder="Children"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fare</td>
+                    <td>
+                        <input id="fare" type="number" min="0" step="0.01"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Embarked</td>
+                    <td>
+                        <select id="embarked">
+                            <option value="1">S</option>
+                            <option value="2">C</option>
+                            <option value="3">Q</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Survived</td>
+                    <td id="survived"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div>
+                            <button id="submit" type="button">PREDICT</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById("survived").innerHTML = "";
+        document.getElementById("submit").addEventListener("click", async () => {
+            try {
+                const siblings = parseInt(document.getElementById("siblings").value) || 0;
+                const spouses = parseInt(document.getElementById("spouses").value) || 0;
+                const parents = parseInt(document.getElementById("parents").value) || 0;
+                const children = parseInt(document.getElementById("children").value) || 0;
+
+                const response = await fetch("http://localhost:8080", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "pclass": parseInt(document.getElementById("pclass").value),
+                        "sex": parseInt(document.getElementById("sex").value),
+                        "age": parseFloat(document.getElementById("age").value),
+                        "sibsp": siblings + spouses,
+                        "parch": parents + children,
+                        "fare": parseFloat(document.getElementById("fare").value),
+                        "embarked": parseInt(document.getElementById("embarked").value),
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const survivedCode = parseInt(await response.text());
+                const survivedElement = document.getElementById("survived");
+                survivedElement.innerHTML = survivedCode ? "YES" : "NO";
+                survivedElement.style.color = survivedCode ? "#0da128" : "#d32f2f";
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById("survived").innerHTML = "Error occurred";
+            }
+        });
+    </script>
 </body>
 </html>
+
